@@ -40,3 +40,62 @@
   font-family: var(--font-intertight);
   font-weight: 900;
 }
+
+/* GREEN THEME */
+/* ============================= */
+/* Dark Mode (default)          */
+/* ============================= */
+@theme {
+  --color-bg-top: hsl(150, 45%, 15%);
+  --color-bg-bottom: hsl(160, 40%, 25%);
+  --color-accent: hsl(150, 90%, 65%);
+  --color-sidebar: hsl(150, 30%, 12%);
+  --color-card: hsl(150, 30%, 10%);
+  --color-text-main: hsl(0, 0%, 95%);
+  --color-text-muted: hsl(150, 10%, 65%);
+}
+/* ============================= */
+/* Light Mode Overrides           */
+/* ============================= */
+.light {
+  --color-bg-top: hsl(140, 60%, 96%);
+  --color-bg-bottom: hsl(160, 60%, 92%);
+  --color-accent: hsl(150, 80%, 40%);
+  --color-sidebar: hsl(150, 40%, 76%);
+  --color-card: hsl(150, 35%, 68%);
+  --color-text-main: hsl(150, 20%, 15%);
+  --color-text-muted: hsl(150, 10%, 45%);
+}
+
+/* Utilities */
+@layer utilities {
+  .bg-gradient {
+    background: linear-gradient(
+      to bottom,
+      var(--color-bg-top),
+      var(--color-bg-bottom)
+    );
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+}
+
+@utility bg-sidebar {
+  background-color: var(--color-sidebar);
+}
+@utility bg-card {
+  background-color: var(--color-card);
+}
+@utility text-main {
+  color: var(--color-text-main);
+}
+@utility text-muted {
+  color: var(--color-text-muted);
+}
+@utility text-accent {
+  color: var(--color-accent);
+}
+@utility bg-accent {
+  background-color: var(--color-accent);
+}

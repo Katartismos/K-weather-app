@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Inter_Tight, Archivo_Narrow } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SideBar from "./components/SideBar";
 
-const interTight = Inter_Tight({
+const interTight = localFont({
+  src: "../public/fonts/InterTight-VariableFont_wght.ttf",
   variable: "--font-intertight",
   display: "swap",
-  subsets: ["latin"],
+  weight: "100 900"
 });
 
-const archivoNarrow = Archivo_Narrow({
+const archivonarrow = localFont({
+  src: "../public/fonts/ArchivoNarrow-VariableFont_wght.ttf",
   variable: "--font-archivonarrow",
-  display: "swap",
-  subsets: ["latin"],
+  display: "swap"
 });
 
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${interTight.className} ${archivoNarrow.variable}`}
+        className={`${interTight.className} ${archivonarrow.variable} bg-gradient text-main`}
       >
         <SideBar />
         {children}
