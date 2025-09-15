@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter_Tight, Archivo_Narrow } from "next/font/google";
 import "./globals.css";
+import SideBar from "./components/SideBar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const interTight = Inter_Tight({
+  variable: "--font-intertight",
+  display: "swap",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const archivoNarrow = Archivo_Narrow({
+  variable: "--font-archivonarrow",
+  display: "swap",
   subsets: ["latin"],
 });
 
@@ -28,8 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${interTight.className} ${archivoNarrow.variable}`}
       >
+        <SideBar />
         {children}
       </body>
     </html>
