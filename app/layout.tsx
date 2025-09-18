@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -34,8 +35,10 @@ export default function RootLayout({
       <body
         className={`${interTight.className} ${archivonarrow.variable} bg-gradient text-main`}
       >
-        <SideBar />
-        {children}
+        <div className="min-h-screen overflow-y-auto">
+          <SideBar />
+          {children}
+        </div>
       </body>
     </html>
   );

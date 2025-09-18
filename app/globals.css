@@ -50,6 +50,7 @@
   --color-bg-bottom: hsl(160, 40%, 25%);
   --color-accent: hsl(150, 90%, 65%);
   --color-sidebar: hsl(150, 30%, 12%);
+  --color-nav-active: hsl(136, 37%, 32%);
   --color-card: hsl(150, 30%, 10%);
   --color-text-main: hsl(0, 0%, 95%);
   --color-text-muted: hsl(150, 10%, 65%);
@@ -62,6 +63,7 @@
   --color-bg-bottom: hsl(160, 60%, 92%);
   --color-accent: hsl(150, 80%, 40%);
   --color-sidebar: hsl(150, 40%, 76%);
+  --color-nav-active: hsl(150, 40%, 45%);
   --color-card: hsl(150, 35%, 68%);
   --color-text-main: hsl(150, 20%, 15%);
   --color-text-muted: hsl(150, 10%, 45%);
@@ -77,25 +79,29 @@
     );
     background-repeat: no-repeat;
     background-size: cover;
-    background-attachment: fixed;
   }
 }
 
-@utility bg-sidebar {
-  background-color: var(--color-sidebar);
-}
-@utility bg-card {
-  background-color: var(--color-card);
-}
-@utility text-main {
-  color: var(--color-text-main);
-}
-@utility text-muted {
-  color: var(--color-text-muted);
-}
-@utility text-accent {
-  color: var(--color-accent);
-}
-@utility bg-accent {
-  background-color: var(--color-accent);
+@layer utilities {
+  .bg-sidebar {
+    background-color: var(--color-sidebar);
+  }
+  .bg-nav-active {
+    background-color: var(--color-nav-active);
+  }
+  .bg-card {
+    background-color: var(--color-card);
+  }
+  .text-main {
+    color: var(--color-text-main);
+  }
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-accent {
+    color: var(--color-accent);
+  }
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
 }
