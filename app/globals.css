@@ -4,6 +4,34 @@
   --font-archivonarrow: var(--font-archivonarrow), sans-serif;
 }
 
+/* GREEN THEME */
+/* ============================= */
+/* Dark Mode (default)          */
+/* ============================= */
+@theme {
+  --color-bg-top: hsl(150, 45%, 15%);
+  --color-bg-bottom: hsl(160, 40%, 25%);
+  --color-accent: hsl(150, 90%, 65%);
+  --color-sidebar: hsl(150, 30%, 12%);
+  --color-nav-active: hsl(136, 37%, 32%);
+  --color-card: hsl(150, 30%, 10%);
+  --color-text-main: hsl(0, 0%, 95%);
+  --color-text-muted: hsl(150, 10%, 65%);
+}
+/* ============================= */
+/* Light Mode Overrides           */
+/* ============================= */
+.light {
+  --color-bg-top: hsl(140, 60%, 96%);
+  --color-bg-bottom: hsl(160, 60%, 92%);
+  --color-accent: hsl(150, 80%, 40%);
+  --color-sidebar: hsl(150, 40%, 76%);
+  --color-nav-active: hsl(150, 40%, 45%);
+  --color-card: hsl(150, 35%, 68%);
+  --color-text-main: hsl(150, 20%, 15%);
+  --color-text-muted: hsl(150, 10%, 45%);
+}
+
 @utility font-intertight-100 {
   font-family: var(--font-intertight);
   font-weight: 100;
@@ -41,67 +69,50 @@
   font-weight: 900;
 }
 
-/* GREEN THEME */
-/* ============================= */
-/* Dark Mode (default)          */
-/* ============================= */
-@theme {
-  --color-bg-top: hsl(150, 45%, 15%);
-  --color-bg-bottom: hsl(160, 40%, 25%);
-  --color-accent: hsl(150, 90%, 65%);
-  --color-sidebar: hsl(150, 30%, 12%);
-  --color-nav-active: hsl(136, 37%, 32%);
-  --color-card: hsl(150, 30%, 10%);
-  --color-text-main: hsl(0, 0%, 95%);
-  --color-text-muted: hsl(150, 10%, 65%);
-}
-/* ============================= */
-/* Light Mode Overrides           */
-/* ============================= */
-.light {
-  --color-bg-top: hsl(140, 60%, 96%);
-  --color-bg-bottom: hsl(160, 60%, 92%);
-  --color-accent: hsl(150, 80%, 40%);
-  --color-sidebar: hsl(150, 40%, 76%);
-  --color-nav-active: hsl(150, 40%, 45%);
-  --color-card: hsl(150, 35%, 68%);
-  --color-text-main: hsl(150, 20%, 15%);
-  --color-text-muted: hsl(150, 10%, 45%);
-}
-
 /* Utilities */
-@layer utilities {
-  .bg-gradient {
-    background: linear-gradient(
-      to bottom,
-      var(--color-bg-top),
-      var(--color-bg-bottom)
-    );
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
+@utility bg-gradient {
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-top),
+    var(--color-bg-bottom)
+  );
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-@layer utilities {
-  .bg-sidebar {
-    background-color: var(--color-sidebar);
-  }
-  .bg-nav-active {
-    background-color: var(--color-nav-active);
-  }
-  .bg-card {
-    background-color: var(--color-card);
-  }
-  .text-main {
-    color: var(--color-text-main);
-  }
-  .text-muted {
-    color: var(--color-text-muted);
-  }
-  .text-accent {
-    color: var(--color-accent);
-  }
-  .bg-accent {
-    background-color: var(--color-accent);
-  }
+@utility gradient-border {
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background: linear-gradient(var(--color-bg-top), var(--color-bg-top)) padding-box, /* Inner background set to transparent */
+              linear-gradient(to right, var(--color-accent), #808080) border-box; /* Gradient over the border area */
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-sizing: border-box;
+}
+
+@utility bg-sidebar {
+  background-color: var(--color-sidebar);
+}
+@utility bg-nav-active {
+  background-color: var(--color-nav-active);
+}
+@utility bg-card {
+  background-color: var(--color-card);
+}
+@utility text-main {
+  color: var(--color-text-main);
+}
+@utility text-muted {
+  color: var(--color-text-muted);
+}
+@utility text-accent {
+  color: var(--color-accent);
+}
+
+@utility button-accent {
+  @apply bg-accent rounded-full flex items-center justify-center text-gray-700 cursor-pointer;
+}
+
+@utility tooltip {
+  @apply rounded-2xl bg-gray-400 text-white;
 }

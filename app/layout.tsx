@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import SideBar from "./components/SideBar";
+import { Header, SideBar, ThemeProvider } from "./components/NoSSR";
 
 const interTight = localFont({
   src: "../public/fonts/InterTight-VariableFont_wght.ttf",
@@ -35,10 +35,13 @@ export default function RootLayout({
       <body
         className={`${interTight.className} ${archivonarrow.variable} bg-gradient text-main`}
       >
-        <div className="min-h-screen overflow-y-auto">
-          <SideBar />
-          {children}
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+          <Header />
+          <div className="min-h-screen overflow-y-auto overflow-x-hidden">
+            <SideBar />
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
