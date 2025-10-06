@@ -3,6 +3,7 @@ import Rain from '../components/Rain';
 import UV from '../components/UV';
 import Cloud from '../components/Cloud';
 import WindChart from '../components/Wind';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -15,7 +16,17 @@ export default function Home() {
         <Cloud />
       </section>
       
-      <section className="rounded-2xl bg-card text-center">Left Section</section>
+      <section className="rounded-2xl bg-card grid grid-rows-[2fr_6fr_12fr]">
+        <div className="flex justify-between items-center px-10">
+          <ChevronLeft size={25} className="cursor-pointer" />
+          <h2 className="text-2xl">This Week</h2>
+          <ChevronRight size={25} className="cursor-pointer" />
+        </div>
+
+        <div className="">Mid</div>
+
+        <div className="">Base</div>
+      </section>
     </main>
   );
 }

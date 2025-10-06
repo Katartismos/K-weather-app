@@ -7,9 +7,9 @@ const Forecast = () => {
       <div className="flex flex-col items-start">
         <Image src="/assets/cloudy-day.svg" alt="Main Forecast" width={100} height={100} />
         <div className="text-6xl font-intertight-500 my-2">1° C</div>
-        <div className="">New York, USA</div>
+        <div className="text-2xl">New York, US</div>
 
-        <hr className="h-0.5 w-full border-t border-green-900 rounded-full opacity-80 my-5"></hr>
+        <hr className="h-0.5 w-full border-t border-green-900 rounded-full opacity-80 my-4"></hr>
 
         <div className="flex items-center">
           <CalendarDays size={15} className="my-3 mr-2" />

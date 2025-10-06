@@ -22,7 +22,7 @@ const Header = () => {
     <div className="fixed top-0 right-0 left-65 grid grid-cols-[240px_1fr_280px] items-center text-center h-35 bg-bg-top">
       <div className="ml-10 h-full flex items-center justify-start">
         <MapPin size={18} className="inline mr-3" />
-        <p className="inline-block text-2xl">New York, 1°</p>
+        <h1 className="inline-block text-2xl">New York, 1°</h1>
       </div>
 
       <div className="h-full flex items-center justify-start">
