@@ -90,23 +90,11 @@
   box-sizing: border-box;
 }
 
-@utility bg-sidebar {
-  background-color: var(--color-sidebar);
-}
-@utility bg-nav-active {
-  background-color: var(--color-nav-active);
-}
-@utility bg-card {
-  background-color: var(--color-card);
-}
 @utility text-main {
   color: var(--color-text-main);
 }
 @utility text-muted {
   color: var(--color-text-muted);
-}
-@utility text-accent {
-  color: var(--color-accent);
 }
 
 @utility button-accent {
