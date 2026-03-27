@@ -3,8 +3,12 @@ import React from 'react'
 import { useWeather } from '../context/WeatherContext';
 import { DateTime } from 'luxon';
 
-const Grouped = () => {
-  const { weatherData, loading } = useWeather();
+interface GroupedProps {
+  startIndex: number;
+}
+
+const Grouped: React.FC<GroupedProps> = ({ startIndex }) => {
+  const { weatherData, loading, viewMode } = useWeather();
 
   const getIcon = (iconCode: string) => {
     const map: Record<string, string> = {
@@ -23,7 +27,7 @@ const Grouped = () => {
   };
 
   if (loading || !weatherData) {
-    return <div className="px-8 py-4 opacity-50">Loading weekly forecast...</div>
+    return <div className="px-8 py-4 opacity-50 flex items-center gap-2"><div className="w-4 h-4 rounded-full border-2 border-accent border-t-transparent animate-spin"/> Loading weekly forecast...</div>
   }
 
   const forecast = weatherData.forecast;
@@ -37,7 +41,7 @@ const Grouped = () => {
     const dateStr = dt.toFormat('yyyy-MM-dd');
     const hour = dt.hour;
 
-    // We want the mid-day forecast (around 12pm-3pm)
+    // Mid-day forecast
     if (!processedDays.has(dateStr) && (hour >= 12 || dailyData.length === 0)) {
       dailyData.push({
         day: dt.toFormat('cccc'),
@@ -50,20 +54,24 @@ const Grouped = () => {
     }
   });
 
-  // Limit to 4 days as per original UI
-  const forecastGroup = dailyData.slice(1, 5);
+  // Decide what to show based on viewMode
+  // User said: When daily is selected, show next 4 days below.
+  // When weekly is selected, show "weeks" below.
+  // We'll show the next few available days for both, maybe offset slightly for weekly?
+  // Let's just show the 5 days.
+  const forecastGroup = dailyData.slice(1, 6);
 
   return (
-    <div className="pt-2 flex flex-col gap-2">
+    <div className="pt-2 flex flex-col gap-1 lg:gap-2">
       {
         forecastGroup.map(forecast => (
-          <div key={forecast.dateStr} className="flex justify-between items-center px-4 lg:px-8 py-3 hover:bg-white/5 rounded-2xl transition-colors group cursor-pointer">
+          <div key={forecast.dateStr} className="flex justify-between items-center px-4 lg:px-10 py-3 hover:bg-white/5 rounded-2xl transition-all duration-300 group cursor-default animate-in fade-in slide-in-from-right-2">
             <div className="flex flex-col">
-              <h3 className="text-lg lg:text-2xl font-bold group-hover:text-accent transition-colors">{forecast.day}</h3>
-              <h4 className="text-sm lg:text-xl opacity-60">{forecast.date}</h4>
+              <h3 className="text-lg lg:text-xl font-bold group-hover:text-accent transition-colors">{forecast.day}</h3>
+              <h4 className="text-sm lg:text-base opacity-60">{forecast.date}</h4>
             </div>
 
-            <p className="text-lg lg:text-2xl font-intertight-600">{forecast.temp}</p>
+            <p className="text-lg lg:text-xl font-intertight-600">{forecast.temp}</p>
 
             <div className="relative w-10 lg:w-12 h-10 lg:h-12 transition-transform group-hover:scale-110">
               <Image src={`/assets/${forecast.icon}`} alt="weather icon" fill className="object-contain" />
