@@ -1,8 +1,10 @@
+'use client';
 import Image from 'next/image'
 import { CalendarDays, Clock8 } from 'lucide-react'
 import TemperatureChart from './TemperatureChart'
 import { useWeather } from '../context/WeatherContext'
 import { DateTime } from 'luxon'
+import { ForecastItem } from '../../types/weather'
 
 const Forecast = () => {
   const { weatherData, loading } = useWeather();
@@ -35,7 +37,7 @@ const Forecast = () => {
   const formattedTime = dt.toFormat('HH:mm');
 
   // Prepare chart data from forecast (next 4 intervals)
-  const chartData = forecast.list.slice(0, 4).map((item: any) => ({
+  const chartData = forecast.list.slice(0, 4).map((item: ForecastItem) => ({
     name: DateTime.fromSeconds(item.dt + forecast.city.timezone, { zone: 'utc' }).toFormat('HH:mm'),
     temp: Math.round(item.main.temp)
   }));

@@ -1,3 +1,4 @@
+'use client';
 import { CloudSunRain } from 'lucide-react'
 import { useWeather } from '../context/WeatherContext'
 

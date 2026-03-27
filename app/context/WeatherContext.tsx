@@ -1,13 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import axios from 'axios';
-import { DateTime } from 'luxon';
+import axios, { AxiosError } from 'axios';
+import { CurrentWeather, ForecastData, UVData, InterpolatedWeather } from '../../types/weather';
 
 interface WeatherData {
-  current: any;
-  forecast: any;
-  uv: any;
+  current: CurrentWeather;
+  forecast: ForecastData;
+  uv: UVData;
 }
 
 export type ViewMode = 'Daily' | 'Weekly';
@@ -18,7 +18,7 @@ interface WeatherContextType {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   weatherData: WeatherData | null;
-  interpolatedHourly: any[] | null;
+  interpolatedHourly: InterpolatedWeather[] | null;
   loading: boolean;
   error: string | null;
   refresh: () => void;
@@ -39,9 +39,10 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       const response = await axios.get(`/api/weather?city=${encodeURIComponent(cityName)}`);
       setWeatherData(response.data);
-    } catch (err: any) {
-      console.error('Error fetching weather:', err);
-      setError(err.response?.data?.error || 'Failed to fetch weather data');
+    } catch (err) {
+      const axiosError = err as AxiosError<{ error: string }>;
+      console.error('Error fetching weather:', axiosError);
+      setError(axiosError.response?.data?.error || 'Failed to fetch weather data');
     } finally {
       setLoading(false);
     }
@@ -57,7 +58,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (!weatherData?.forecast) return null;
     
     const list = weatherData.forecast.list;
-    const result: any[] = [];
+    const result: InterpolatedWeather[] = [];
     const nowEpoch = Math.floor(Date.now() / 1000);
     
     // Average weather mapping helper

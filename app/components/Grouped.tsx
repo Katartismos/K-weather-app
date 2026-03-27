@@ -1,14 +1,20 @@
+'use client';
 import Image from 'next/image';
 import React from 'react'
 import { useWeather } from '../context/WeatherContext';
 import { DateTime } from 'luxon';
+import { ForecastItem } from '../../types/weather';
 
-interface GroupedProps {
-  startIndex: number;
+interface DailyForecast {
+  day: string;
+  date: string;
+  temp: string;
+  icon: string;
+  dateStr: string;
 }
 
-const Grouped: React.FC<GroupedProps> = ({ startIndex }) => {
-  const { weatherData, loading, viewMode } = useWeather();
+const Grouped: React.FC = () => {
+  const { weatherData, loading } = useWeather();
 
   const getIcon = (iconCode: string) => {
     const map: Record<string, string> = {
@@ -33,10 +39,10 @@ const Grouped: React.FC<GroupedProps> = ({ startIndex }) => {
   const forecast = weatherData.forecast;
   
   // Group by day and take the one closest to 12:00
-  const dailyData: any[] = [];
+  const dailyData: DailyForecast[] = [];
   const processedDays = new Set();
 
-  forecast.list.forEach((item: any) => {
+  forecast.list.forEach((item: ForecastItem) => {
     const dt = DateTime.fromSeconds(item.dt + forecast.city.timezone, { zone: 'utc' });
     const dateStr = dt.toFormat('yyyy-MM-dd');
     const hour = dt.hour;

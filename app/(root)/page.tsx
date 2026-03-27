@@ -86,7 +86,7 @@ export default function Home() {
         </div>
 
         <HourlyForecasts startIndex={startIndex} />
-        <Grouped startIndex={startIndex} />
+        <Grouped />
       </section>
     </main>
   );
