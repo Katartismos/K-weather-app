@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Header, SideBar, ThemeProvider } from "./components/NoSSR";
+import { MobileMenuProvider } from "./context/MobileMenuContext";
+import { WeatherProvider } from "./context/WeatherContext";
 
 const interTight = localFont({
   src: "../public/fonts/InterTight-VariableFont_wght.ttf",
@@ -36,11 +38,15 @@ export default function RootLayout({
         className={`${interTight.className} ${archivonarrow.variable} bg-gradient text-main`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <Header />
-          <div className="min-h-screen overflow-y-auto overflow-x-hidden">
-            <SideBar />
-            {children}
-          </div>
+          <WeatherProvider>
+            <MobileMenuProvider>
+              <Header />
+              <div className="min-h-screen overflow-y-auto overflow-x-hidden relative">
+                <SideBar />
+                {children}
+              </div>
+            </MobileMenuProvider>
+          </WeatherProvider>
         </ThemeProvider>
       </body>
     </html>

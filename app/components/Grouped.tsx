@@ -1,27 +1,73 @@
 import Image from 'next/image';
+import React from 'react'
+import { useWeather } from '../context/WeatherContext';
+import { DateTime } from 'luxon';
 
 const Grouped = () => {
-  const forecastGroup = [
-    { day: "Tomorrow", date: "17 Jan", temp: "1° C", icon: "cloudy-day.svg" },
-    { day: "Monday", date: "18 Jan", temp: "-1° C", icon: "cloudy.svg" },
-    { day: "Tuesday", date: "19 Jan", temp: "0° C", icon: "downpour.svg" },
-    { day: "Wednesday", date: "20 Jan", temp: "1° C", icon: "dark-lightning-storm.svg" },
-    { day: "Thursday", date: "21 Jan", temp: "2° C", icon: "cloudy-day.svg" }
-  ];
+  const { weatherData, loading } = useWeather();
+
+  const getIcon = (iconCode: string) => {
+    const map: Record<string, string> = {
+      '01': 'sunny.svg',
+      '02': 'cloudy-day.svg',
+      '03': 'cloudy.svg',
+      '04': 'cloudy.svg',
+      '09': 'downpour.svg',
+      '10': 'downpour.svg',
+      '11': 'dark-lightning-storm.svg',
+      '13': 'cloudy.svg',
+      '50': 'cloudy.svg',
+    };
+    const base = iconCode.substring(0, 2);
+    return map[base] || 'cloudy.svg';
+  };
+
+  if (loading || !weatherData) {
+    return <div className="px-8 py-4 opacity-50">Loading weekly forecast...</div>
+  }
+
+  const forecast = weatherData.forecast;
+  
+  // Group by day and take the one closest to 12:00
+  const dailyData: any[] = [];
+  const processedDays = new Set();
+
+  forecast.list.forEach((item: any) => {
+    const dt = DateTime.fromSeconds(item.dt + forecast.city.timezone, { zone: 'utc' });
+    const dateStr = dt.toFormat('yyyy-MM-dd');
+    const hour = dt.hour;
+
+    // We want the mid-day forecast (around 12pm-3pm)
+    if (!processedDays.has(dateStr) && (hour >= 12 || dailyData.length === 0)) {
+      dailyData.push({
+        day: dt.toFormat('cccc'),
+        date: dt.toFormat('d LLL'),
+        temp: `${Math.round(item.main.temp)}° C`,
+        icon: getIcon(item.weather[0].icon),
+        dateStr
+      });
+      processedDays.add(dateStr);
+    }
+  });
+
+  // Limit to 4 days as per original UI
+  const forecastGroup = dailyData.slice(1, 5);
 
   return (
-    <div className="pt-5 grid">
+    <div className="pt-2 flex flex-col gap-2">
       {
         forecastGroup.map(forecast => (
-          <div key={forecast.day} className="flex justify-between px-8">
-            <div>
-              <h3 className="text-2xl">{forecast.day}</h3>
-              <h4 className="text-xl">{forecast.date}</h4>
+          <div key={forecast.dateStr} className="flex justify-between items-center px-4 lg:px-8 py-3 hover:bg-white/5 rounded-2xl transition-colors group cursor-pointer">
+            <div className="flex flex-col">
+              <h3 className="text-lg lg:text-2xl font-bold group-hover:text-accent transition-colors">{forecast.day}</h3>
+              <h4 className="text-sm lg:text-xl opacity-60">{forecast.date}</h4>
             </div>
 
-            <p className="text-2xl pt-3">{forecast.temp}</p>
+            <p className="text-lg lg:text-2xl font-intertight-600">{forecast.temp}</p>
 
-            <Image src={`/assets/${forecast.icon}`} alt="weather icon" width={45} height={45} className="mb-10" />
+            <div className="relative w-10 lg:w-12 h-10 lg:h-12 transition-transform group-hover:scale-110">
+              <Image src={`/assets/${forecast.icon}`} alt="weather icon" fill className="object-contain" />
+            </div>
           </div>
         ))
       }
