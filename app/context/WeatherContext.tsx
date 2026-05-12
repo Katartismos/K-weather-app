@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import axios, { AxiosError } from 'axios';
+
 import { CurrentWeather, ForecastData, UVData, InterpolatedWeather } from '../../types/weather';
 
 interface WeatherData {
@@ -37,12 +37,19 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`/api/weather?city=${encodeURIComponent(cityName)}`);
-      setWeatherData(response.data);
+      const response = await fetch(`/api/weather?city=${encodeURIComponent(cityName)}`);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch weather data');
+      }
+      setWeatherData(data);
     } catch (err) {
-      const axiosError = err as AxiosError<{ error: string }>;
-      console.error('Error fetching weather:', axiosError);
-      setError(axiosError.response?.data?.error || 'Failed to fetch weather data');
+      console.error('Error fetching weather:', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to fetch weather data');
+      }
     } finally {
       setLoading(false);
     }

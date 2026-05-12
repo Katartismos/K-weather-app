@@ -1,4 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
+import https from 'https';
+
+function httpsGet(url: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(e);
+          }
+        } else {
+          const err: any = new Error(`HTTP Error: ${res.statusCode}`);
+          err.status = res.statusCode;
+          reject(err);
+        }
+      });
+    }).on('error', reject);
+  });
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -11,35 +34,36 @@ export async function GET(request: NextRequest) {
 
   try {
     // 1. Fetch current weather to get coords for UV index
-    const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    const currentRes = await fetch(currentUrl);
+    const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
     
-    if (!currentRes.ok) {
-      return NextResponse.json({ error: 'City not found' }, { status: currentRes.status });
+    let currentData;
+    try {
+      currentData = await httpsGet(currentUrl);
+    } catch (err: any) {
+      if (err.status === 404) {
+        return NextResponse.json({ error: 'City not found' }, { status: 404 });
+      }
+      throw err;
     }
     
-    const currentData = await currentRes.json();
     const { lat, lon } = currentData.coord;
 
     // 2. Fetch forecast and UV index in parallel
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
     const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
-    const [forecastRes, uvRes] = await Promise.all([
-      fetch(forecastUrl),
-      fetch(uvUrl)
+    const [forecastData, uvData] = await Promise.all([
+      httpsGet(forecastUrl),
+      httpsGet(uvUrl).catch(() => ({ value: 0 }))
     ]);
-
-    const forecastData = await forecastRes.json();
-    const uvData = uvRes.ok ? await uvRes.json() : { value: 0 };
 
     return NextResponse.json({
       current: currentData,
       forecast: forecastData,
       uv: uvData
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Weather API Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }
