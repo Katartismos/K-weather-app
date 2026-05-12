@@ -61,12 +61,22 @@ export default function ChartsPage() {
     );
   }
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      color: string;
+      name: string;
+      value: number | string;
+    }>;
+    label?: string;
+  }
+
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-[#1e1e1e]/90 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-xl">
           <p className="font-bold mb-2 text-white/90">{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index: number) => (
             <div key={index} className="flex items-center gap-2 mb-1">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
               <span className="text-white/80 capitalize">{entry.name.replace('_', ' ')}:</span>
