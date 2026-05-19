@@ -118,7 +118,7 @@ const Settings = () => {
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="text-sm lg:text-base font-medium">Daily Weather Summary</span>
-                <span className="text-xs text-muted">Receive a morning brief of the day's weather.</span>
+                <span className="text-xs text-muted">Receive a morning brief of the day&apos;s weather.</span>
               </div>
               <button 
                 onClick={() => setDailySummary(!dailySummary)} 
