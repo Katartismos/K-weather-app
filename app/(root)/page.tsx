@@ -68,21 +68,31 @@ export default function Home() {
         <Cloud />
       </section>
       
-      <section className="rounded-3xl bg-card flex flex-col gap-6 py-8 px-4 lg:px-5 border border-white/5 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
-        <div className="flex justify-between items-center px-4 lg:px-10">
-          <ChevronLeft 
-            size={25} 
-            className={`cursor-pointer transition-colors ${startIndex === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:text-accent'}`}
+      <section className="glass-card rounded-3xl flex flex-col gap-5 py-6 px-4 lg:px-6 shadow-2xl animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
+        <div className="flex justify-between items-center px-2 lg:px-4">
+          <button 
+            type="button"
             onClick={startIndex === 0 ? undefined : handlePrev}
-          />
-          <h2 className="text-xl lg:text-2xl font-bold">
+            disabled={startIndex === 0}
+            aria-label="Previous forecast intervals"
+            className="size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <h2 className="text-xl lg:text-2xl font-bold tracking-tight text-main">
             {viewMode === 'Daily' ? 'Today' : 'This Week'}
           </h2>
-          <ChevronRight 
-            size={25} 
-            className={`cursor-pointer transition-colors ${isNextDisabled ? 'opacity-20 cursor-not-allowed' : 'hover:text-accent'}`}
+
+          <button 
+            type="button"
             onClick={isNextDisabled ? undefined : handleNext}
-          />
+            disabled={isNextDisabled}
+            aria-label="Next forecast intervals"
+            className="size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
 
         <HourlyForecasts startIndex={startIndex} />

@@ -17,6 +17,7 @@ export interface MainWeather {
 export interface Wind {
   speed: number;
   deg: number;
+  gust?: number;
 }
 
 export interface Clouds {
