@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { useState, useEffect } from 'react';
-import { MapPin, Search, Bell, Sun, Moon, User2, Menu } from 'lucide-react';
-import { useMobileMenu } from '../context/MobileMenuContext';
-import { useWeather, ViewMode } from '../context/WeatherContext';
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
+import { MapPin, Search, Bell, Sun, Moon, User2, Menu } from "lucide-react";
+import { useMobileMenu } from "../context/MobileMenuContext";
+import { useWeather, ViewMode } from "../context/WeatherContext";
 
 const Header = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const { toggle } = useMobileMenu();
   const { city, setCity, weatherData, viewMode, setViewMode } = useWeather();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -30,19 +30,19 @@ const Header = () => {
   };
 
   const forecastSpans: { span: ViewMode }[] = [
-    { span: 'Daily' },
-    { span: 'Weekly' },
+    { span: "Daily" },
+    { span: "Weekly" },
   ];
 
   const currentTemp = weatherData?.current?.main?.temp;
   const displayCity = weatherData?.current?.name || city;
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-65 h-20 lg:h-24 glass-header px-4 lg:px-8 z-30 transition-all duration-300 flex items-center justify-between gap-3">
+    <header className="fixed top-0 right-0 left-0 lg:left-65 h-20 lg:h-24 glass-header backdrop-blur-2xl px-4 lg:px-8 z-30 transition-all duration-300 flex items-center justify-between gap-3">
       {/* Left: Mobile Menu & Location */}
       <div className="flex items-center gap-3 shrink-0">
-        <button 
-          onClick={toggle} 
+        <button
+          onClick={toggle}
           aria-label="Open navigation menu"
           className="lg:hidden size-10 flex items-center justify-center rounded-xl bg-pill-bg hover:bg-surface-hover border border-border text-main transition-colors"
         >
@@ -55,16 +55,19 @@ const Header = () => {
             {displayCity}
           </span>
           <span className="text-accent font-bold">
-            {currentTemp !== undefined ? `${Math.round(currentTemp)}°` : '--°'}
+            {currentTemp !== undefined ? `${Math.round(currentTemp)}°` : "--°"}
           </span>
         </div>
       </div>
 
       {/* Center: Search Bar & View Mode Toggle */}
       <div className="flex items-center justify-center gap-3 lg:gap-5 flex-1 max-w-2xl px-2">
-        <form onSubmit={handleSearch} className="relative w-full max-w-md h-10 lg:h-11 rounded-full bg-pill-bg border border-border focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all flex items-center px-3.5 gap-2.5">
+        <form
+          onSubmit={handleSearch}
+          className="relative w-full max-w-md h-10 lg:h-11 rounded-full bg-pill-bg border border-border focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all flex items-center px-3.5 gap-2.5"
+        >
           <Search size={16} className="text-text-muted shrink-0" />
-          <input 
+          <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -72,9 +75,9 @@ const Header = () => {
             className="flex-1 text-xs lg:text-sm outline-none bg-transparent text-main placeholder:text-text-muted/60"
           />
           {searchInput && (
-            <button 
-              type="submit" 
-              className="text-[11px] font-semibold bg-accent text-gray-900 px-2.5 py-1 rounded-full shrink-0 transition-transform active:scale-95 hover:brightness-105"
+            <button
+              type="submit"
+              className="text-[11px] font-semibold bg-accent text-accent-contrast px-2.5 py-1 rounded-full shrink-0 transition-transform active:scale-95 hover:brightness-105 cursor-pointer"
             >
               Search
             </button>
@@ -86,13 +89,13 @@ const Header = () => {
           {forecastSpans.map((forecastSpan) => {
             const isActive = viewMode === forecastSpan.span;
             return (
-              <button 
-                key={forecastSpan.span} 
+              <button
+                key={forecastSpan.span}
                 type="button"
                 className={`px-3 py-1 rounded-full text-xs lg:text-sm font-medium transition-all cursor-pointer ${
-                  isActive 
-                    ? 'bg-accent text-gray-900 font-semibold shadow-sm' 
-                    : 'text-text-muted hover:text-main'
+                  isActive
+                    ? "bg-accent text-accent-contrast font-semibold shadow-sm"
+                    : "text-text-muted hover:text-main"
                 }`}
                 onClick={() => setViewMode(forecastSpan.span)}
               >
@@ -105,14 +108,14 @@ const Header = () => {
 
       {/* Right: Theme Toggle & Quick Actions */}
       <div className="flex items-center gap-2 lg:gap-3 shrink-0">
-        <button 
+        <button
           type="button"
           aria-label="Toggle color theme"
-          className="size-9 lg:size-10 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main transition-all cursor-pointer active:scale-95" 
-          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+          className="size-9 lg:size-10 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main transition-all cursor-pointer active:scale-95"
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
         >
           {mounted ? (
-            resolvedTheme === 'dark' ? (
+            resolvedTheme === "dark" ? (
               <Sun size={18} className="text-amber-400" />
             ) : (
               <Moon size={18} className="text-blue-500" />
