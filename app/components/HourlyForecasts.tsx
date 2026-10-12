@@ -71,18 +71,18 @@ const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="px-2 lg:px-4 py-2 grid grid-cols-4 gap-2.5 lg:gap-4 overflow-hidden">
+      <div className="px-1 sm:px-2 lg:px-4 py-2 grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4 overflow-hidden">
         {visibleData.map((hour: DisplayHour) => (
           <div 
             key={hour.id} 
-            className={`border rounded-2xl flex flex-col items-center justify-between py-3 px-1 min-w-[70px] transition-all duration-300 group cursor-default hover:-translate-y-1 shadow-sm ${
+            className={`border rounded-xl sm:rounded-2xl flex flex-col items-center justify-between py-2 sm:py-3 px-1 min-w-0 w-full transition-all duration-300 group cursor-default hover:-translate-y-1 shadow-sm ${
               hour.isNow 
                 ? 'bg-accent/15 border-accent/40 shadow-accent/10' 
                 : 'bg-pill-bg border-border hover:bg-surface-hover hover:border-accent/30'
             }`}
           >
             <div className="flex flex-col items-center gap-0.5">
-              <span className={`text-xs font-semibold ${hour.isNow ? 'text-accent' : 'text-text-muted group-hover:text-main'}`}>
+              <span className={`text-[11px] sm:text-xs font-semibold ${hour.isNow ? 'text-accent' : 'text-text-muted group-hover:text-main'}`}>
                 {hour.time}
               </span>
               {hour.isNow && (
@@ -90,7 +90,7 @@ const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
               )}
             </div>
 
-            <div className="relative size-11 lg:size-14 transition-transform group-hover:scale-110 drop-shadow-md my-1">
+            <div className="relative size-8 sm:size-11 lg:size-14 transition-transform group-hover:scale-110 drop-shadow-md my-0.5 sm:my-1">
               <Image 
                 src={getWeatherIconUrl(hour.icon, '2x')} 
                 alt="weather icon" 
@@ -99,7 +99,7 @@ const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
               />
             </div>
 
-            <p className="font-bold text-sm lg:text-base text-main group-hover:text-accent transition-colors">
+            <p className="font-bold text-xs sm:text-sm lg:text-base text-main group-hover:text-accent transition-colors">
               {hour.temp}
             </p>
           </div>

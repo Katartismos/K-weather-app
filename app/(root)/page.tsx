@@ -59,8 +59,8 @@ export default function Home() {
   const isNextDisabled = (viewMode === 'Daily' && startIndex >= 44) || (viewMode === 'Weekly' && startIndex >= 2);
 
   return (
-    <main className="text-lg lg:text-xl grid grid-cols-1 xl:grid-cols-[6.5fr_5fr] gap-8 lg:gap-10 pb-10 pl-4 lg:pl-75 pt-28 lg:pt-40 pr-4 lg:pr-10 min-h-screen transition-all duration-300">
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-[6fr_5fr] gap-6 lg:gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <main className="text-lg lg:text-xl grid grid-cols-1 xl:grid-cols-[6.5fr_5fr] gap-6 lg:gap-10 pb-10 px-3 sm:px-4 lg:pr-10 lg:pl-75 pt-22 sm:pt-26 lg:pt-36 min-h-screen transition-all duration-300">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-[6fr_5fr] gap-4 sm:gap-6 lg:gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <Forecast />
         <WindChart />
         <Rain />
@@ -68,19 +68,19 @@ export default function Home() {
         <Cloud />
       </section>
       
-      <section className="glass-card rounded-3xl flex flex-col gap-5 py-6 px-4 lg:px-6 shadow-2xl animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
-        <div className="flex justify-between items-center px-2 lg:px-4">
+      <section className="glass-card rounded-2xl sm:rounded-3xl flex flex-col gap-5 py-5 sm:py-6 px-3 sm:px-5 lg:px-6 shadow-2xl animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
+        <div className="flex justify-between items-center px-1 sm:px-3 lg:px-4">
           <button 
             type="button"
             onClick={startIndex === 0 ? undefined : handlePrev}
             disabled={startIndex === 0}
             aria-label="Previous forecast intervals"
-            className="size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
+            className="size-8 sm:size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={17} />
           </button>
 
-          <h2 className="text-xl lg:text-2xl font-bold tracking-tight text-main">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight text-main">
             {viewMode === 'Daily' ? 'Today' : 'This Week'}
           </h2>
 
@@ -89,9 +89,9 @@ export default function Home() {
             onClick={isNextDisabled ? undefined : handleNext}
             disabled={isNextDisabled}
             aria-label="Next forecast intervals"
-            className="size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
+            className="size-8 sm:size-9 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95 shadow-sm"
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={17} />
           </button>
         </div>
 

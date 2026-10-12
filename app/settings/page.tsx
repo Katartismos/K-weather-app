@@ -30,19 +30,19 @@ const Settings = () => {
   }, []);
 
   return (
-    <div className="pt-28 lg:pt-36 pl-4 lg:pl-75 px-4 lg:pr-10 pb-10 min-h-screen">
-      <div className="mb-8">
-        <h1 className="text-3xl lg:text-4xl font-bold font-archivo mb-2 text-main">
+    <div className="pt-22 sm:pt-26 lg:pt-36 px-3 sm:px-4 lg:pr-10 lg:pl-75 pb-10 min-h-screen">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-archivo mb-1 text-main">
           Settings
         </h1>
-        <p className="text-text-muted text-sm lg:text-base">
+        <p className="text-text-muted text-xs sm:text-sm lg:text-base">
           Manage your application preferences, units, and appearance.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
         {/* Appearance Settings */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Monitor size={20} />
@@ -87,7 +87,7 @@ const Settings = () => {
         </div>
 
         {/* Units & Formats */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Ruler size={20} />
@@ -206,7 +206,7 @@ const Settings = () => {
         </div>
 
         {/* Notifications */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Bell size={20} />
@@ -279,7 +279,7 @@ const Settings = () => {
         </div>
 
         {/* About / Info */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300 flex flex-col justify-between">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">

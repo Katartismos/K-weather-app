@@ -58,22 +58,22 @@ const Grouped: React.FC = () => {
       {forecastGroup.map((forecast) => (
         <div 
           key={forecast.dateStr} 
-          className="flex justify-between items-center px-4 lg:px-6 py-3 rounded-2xl bg-pill-bg border border-border hover:border-accent/35 hover:bg-surface-hover transition-all duration-300 group cursor-default shadow-sm"
+          className="flex justify-between items-center px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-pill-bg border border-border hover:border-accent/35 hover:bg-surface-hover transition-all duration-300 group cursor-default shadow-sm"
         >
           <div className="flex flex-col">
-            <h3 className="text-base lg:text-lg font-bold group-hover:text-accent transition-colors text-main">
+            <h3 className="text-sm sm:text-base lg:text-lg font-bold group-hover:text-accent transition-colors text-main">
               {forecast.day}
             </h3>
-            <span className="text-xs text-text-muted capitalize">
+            <span className="text-[11px] sm:text-xs text-text-muted capitalize">
               {forecast.date} · {forecast.desc}
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <p className="text-base lg:text-lg font-intertight-600 text-main">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <p className="text-sm sm:text-base lg:text-lg font-semibold text-main">
               {forecast.temp}
             </p>
-            <div className="relative size-10 lg:size-11 transition-transform group-hover:scale-110 drop-shadow-sm shrink-0">
+            <div className="relative size-8 sm:size-10 lg:size-11 transition-transform group-hover:scale-110 drop-shadow-sm shrink-0">
               <Image 
                 src={getWeatherIconUrl(forecast.icon, '2x')} 
                 alt="weather icon" 

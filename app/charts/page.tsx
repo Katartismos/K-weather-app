@@ -99,46 +99,46 @@ export default function ChartsPage() {
   );
 
   return (
-    <main className="text-lg lg:text-xl flex flex-col gap-8 pb-10 pl-4 lg:pl-75 pt-28 lg:pt-36 pr-4 lg:pr-10 min-h-screen transition-all duration-300">
+    <main className="text-lg lg:text-xl flex flex-col gap-6 sm:gap-8 pb-10 px-3 sm:px-4 lg:pr-10 lg:pl-75 pt-22 sm:pt-26 lg:pt-36 min-h-screen transition-all duration-300">
       
       {/* Header & Toggle */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold font-intertight-600 mb-1 text-main">Weather Charts</h1>
-          <p className="text-text-muted text-sm lg:text-base">Detailed meteorological telemetry and forecasts</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 text-main">Weather Charts</h1>
+          <p className="text-text-muted text-xs sm:text-sm lg:text-base">Detailed meteorological telemetry and forecasts</p>
         </div>
         
-        <div className="flex bg-pill-bg border border-border rounded-full p-1 shadow-sm">
+        <div className="flex bg-pill-bg border border-border rounded-full p-1 shadow-sm shrink-0">
           <button
             onClick={() => setViewMode('48h')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-300 text-xs lg:text-sm cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full transition-all duration-300 text-xs lg:text-sm cursor-pointer ${
               viewMode === '48h' 
                 ? 'bg-accent text-gray-900 font-bold shadow-sm' 
                 : 'text-text-muted hover:text-main'
             }`}
           >
-            <CalendarClock size={16} />
+            <CalendarClock size={15} />
             48 Hours
           </button>
           <button
             onClick={() => setViewMode('5d')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-300 text-xs lg:text-sm cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full transition-all duration-300 text-xs lg:text-sm cursor-pointer ${
               viewMode === '5d' 
                 ? 'bg-accent text-gray-900 font-bold shadow-sm' 
                 : 'text-text-muted hover:text-main'
             }`}
           >
-            <CalendarDays size={16} />
+            <CalendarDays size={15} />
             5 Days
           </button>
         </div>
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+      <div className="grid grid-cols-1 gap-6 sm:gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
         
         {/* Temperature Chart */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden group">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden group">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-orange-500/15 border border-orange-500/30 p-2 rounded-xl">
               <Thermometer size={22} className="text-orange-400" />
@@ -186,7 +186,7 @@ export default function ChartsPage() {
         </div>
 
         {/* Precipitation & Humidity */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden group">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden group">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-blue-500/15 border border-blue-500/30 p-2 rounded-xl">
               <Droplets size={22} className="text-blue-400" />
@@ -196,7 +196,7 @@ export default function ChartsPage() {
               <span className="text-xs text-text-muted">Moisture and rain probability</span>
             </div>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[260px] sm:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border-subtle, rgba(255,255,255,0.05))" />
@@ -225,7 +225,7 @@ export default function ChartsPage() {
         </div>
 
         {/* Wind Speed Chart */}
-        <div className="glass-card rounded-3xl p-6 lg:p-8 shadow-xl relative overflow-hidden group">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden group">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-teal-500/15 border border-teal-500/30 p-2 rounded-xl">
               <WindIcon size={22} className="text-teal-400" />

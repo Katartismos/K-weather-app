@@ -49,7 +49,7 @@ const Cloud = () => {
   const coverage = getCloudCoverage(clouds);
 
   return (
-    <div className="glass-card p-5 lg:p-6 rounded-3xl shadow-xl hover:border-accent/35 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between gap-4 relative overflow-hidden group">
+    <div className="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl shadow-xl hover:border-accent/35 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between gap-3.5 sm:gap-4 relative overflow-hidden group">
       {/* Background subtle glow */}
       <div className="absolute -top-10 -right-10 size-28 rounded-full bg-slate-400/10 blur-2xl group-hover:bg-slate-400/20 transition-all pointer-events-none" />
 
