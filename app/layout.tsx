@@ -1,23 +1,16 @@
 import React from "react";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 import { Header, SideBar, ThemeProvider } from "./components/NoSSR";
 import { MobileMenuProvider } from "./context/MobileMenuContext";
 import { WeatherProvider } from "./context/WeatherContext";
 
-
-const interTight = localFont({
-  src: "../public/fonts/InterTight-VariableFont_wght.ttf",
-  variable: "--font-intertight",
+const archivo = Archivo({
+  subsets: ["latin"],
+  variable: "--font-archivo",
   display: "swap",
-  weight: "100 900"
-});
-
-const archivonarrow = localFont({
-  src: "../public/fonts/ArchivoNarrow-VariableFont_wght.ttf",
-  variable: "--font-archivonarrow",
-  display: "swap"
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +18,7 @@ export const metadata: Metadata = {
   description: "Just a weather app to showcase my skills.",
   icons: {
     icon: "/favicon.png",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -34,11 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${interTight.className} ${archivonarrow.variable} bg-gradient text-main`}
+        className={`${archivo.className} ${archivo.variable} bg-gradient text-main`}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          enableSystem={false}
+          disableTransitionOnChange
+          defaultTheme="dark"
+        >
           <WeatherProvider>
             <MobileMenuProvider>
               <Header />
