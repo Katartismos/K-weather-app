@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 import {
   Moon,
@@ -13,21 +14,66 @@ import {
   Ruler,
 } from "lucide-react";
 import Image from "next/image";
+import { motion, LayoutGroup } from "motion/react";
+import { useWeather } from "../context/WeatherContext";
+
+const THEME_OPTIONS = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+] as const;
+
+const TEMP_OPTIONS = [
+  { value: "celsius", label: "°C" },
+  { value: "fahrenheit", label: "°F" },
+] as const;
+
+const WIND_OPTIONS = [
+  { value: "kmh", label: "km/h" },
+  { value: "mph", label: "mph" },
+] as const;
+
+const TIME_OPTIONS = [
+  { value: "24h", label: "24h" },
+  { value: "12h", label: "12h" },
+] as const;
 
 const Settings = () => {
   const { resolvedTheme, setTheme } = useTheme();
+  const {
+    temperatureUnit,
+    setTemperatureUnit,
+    windUnit,
+    setWindUnit,
+    timeFormat,
+    setTimeFormat,
+  } = useWeather();
   const [mounted, setMounted] = useState(false);
-  const [temperatureUnit, setTemperatureUnit] = useState<
-    "celsius" | "fahrenheit"
-  >("celsius");
-  const [windUnit, setWindUnit] = useState<"ms" | "mph">("ms");
-  const [timeFormat, setTimeFormat] = useState<"24h" | "12h">("24h");
   const [dailySummary, setDailySummary] = useState(true);
   const [severeAlerts, setSevereAlerts] = useState(true);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleThemeChange = (newTheme?: string) => {
+    const nextTheme =
+      newTheme && (newTheme === "light" || newTheme === "dark")
+        ? newTheme
+        : resolvedTheme === "dark"
+          ? "light"
+          : "dark";
+    if (nextTheme === resolvedTheme) return;
+
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      document.startViewTransition(() => {
+        flushSync(() => {
+          setTheme(nextTheme);
+        });
+      });
+    } else {
+      setTheme(nextTheme);
+    }
+  };
 
   return (
     <div className="pt-22 sm:pt-26 lg:pt-36 px-3 sm:px-4 lg:pr-10 lg:pl-75 pb-10 min-h-screen">
@@ -42,7 +88,7 @@ const Settings = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
         {/* Appearance Settings */}
-        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-colors duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Monitor size={20} />
@@ -59,35 +105,47 @@ const Settings = () => {
             <p className="text-sm text-text-muted">
               Select your preferred color theme for the interface.
             </p>
-            <div className="flex items-center gap-2 bg-track-bg border border-track-border p-1.5 rounded-2xl shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
-              <button
-                type="button"
-                onClick={() => setTheme("light")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                  mounted && resolvedTheme === "light"
-                    ? "bg-accent text-accent-contrast shadow-sm"
-                    : "text-text-muted hover:text-main hover:bg-surface-hover"
-                }`}
-              >
-                <Sun size={17} /> Light
-              </button>
-              <button
-                type="button"
-                onClick={() => setTheme("dark")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                  mounted && resolvedTheme === "dark"
-                    ? "bg-accent text-accent-contrast shadow-sm"
-                    : "text-text-muted hover:text-main hover:bg-surface-hover"
-                }`}
-              >
-                <Moon size={17} /> Dark
-              </button>
-            </div>
+            <LayoutGroup id="settings-theme">
+              <div className="flex items-center gap-2 bg-track-bg border border-track-border p-1.5 rounded-2xl shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)] relative">
+                {THEME_OPTIONS.map((option) => {
+                  const isActive = mounted && resolvedTheme === option.value;
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleThemeChange(option.value)}
+                      className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                        isActive
+                          ? "text-gray-100 dark:text-gray-900"
+                          : "text-text-muted hover:text-main hover:bg-surface-hover"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layout
+                          layoutId="settings-theme-pill"
+                          className="absolute inset-0 bg-accent rounded-xl shadow-sm settings-theme-pill"
+                          transition={{
+                            type: "spring",
+                            duration: 0.35,
+                            bounce: 0.2,
+                          }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-2">
+                        <Icon size={17} /> {option.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </LayoutGroup>
           </div>
         </div>
 
         {/* Units & Formats */}
-        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-colors duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Ruler size={20} />
@@ -109,30 +167,39 @@ const Settings = () => {
                   Temperature
                 </span>
               </div>
-              <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
-                <button
-                  type="button"
-                  onClick={() => setTemperatureUnit("celsius")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    temperatureUnit === "celsius"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  °C
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTemperatureUnit("fahrenheit")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    temperatureUnit === "fahrenheit"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  °F
-                </button>
-              </div>
+              <LayoutGroup id="settings-temperature">
+                <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)] relative">
+                  {TEMP_OPTIONS.map((option) => {
+                    const isActive = temperatureUnit === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setTemperatureUnit(option.value)}
+                        className={`relative px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-colors cursor-pointer ${
+                          isActive
+                            ? "text-gray-100 dark:text-gray-900"
+                            : "text-text-muted hover:text-main hover:bg-surface-hover"
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layout
+                            layoutId="settings-temp-pill"
+                            className="absolute inset-0 bg-accent rounded-lg shadow-sm"
+                            transition={{
+                              type: "spring",
+                              duration: 0.35,
+                              bounce: 0.2,
+                            }}
+                          />
+                        )}
+                        <span className="relative z-10">{option.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </LayoutGroup>
             </div>
 
             {/* Wind Speed */}
@@ -143,30 +210,39 @@ const Settings = () => {
                   Wind Speed
                 </span>
               </div>
-              <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
-                <button
-                  type="button"
-                  onClick={() => setWindUnit("ms")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    windUnit === "ms"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  km/h
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setWindUnit("mph")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    windUnit === "mph"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  mph
-                </button>
-              </div>
+              <LayoutGroup id="settings-wind">
+                <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)] relative">
+                  {WIND_OPTIONS.map((option) => {
+                    const isActive = windUnit === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setWindUnit(option.value)}
+                        className={`relative px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-colors cursor-pointer ${
+                          isActive
+                            ? "text-gray-100 dark:text-gray-900"
+                            : "text-text-muted hover:text-main hover:bg-surface-hover"
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layout
+                            layoutId="settings-wind-pill"
+                            className="absolute inset-0 bg-accent rounded-lg shadow-sm"
+                            transition={{
+                              type: "spring",
+                              duration: 0.35,
+                              bounce: 0.2,
+                            }}
+                          />
+                        )}
+                        <span className="relative z-10">{option.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </LayoutGroup>
             </div>
 
             {/* Time Format */}
@@ -177,36 +253,45 @@ const Settings = () => {
                   Time Format
                 </span>
               </div>
-              <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
-                <button
-                  type="button"
-                  onClick={() => setTimeFormat("24h")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    timeFormat === "24h"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  24h
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTimeFormat("12h")}
-                  className={`px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-all cursor-pointer ${
-                    timeFormat === "12h"
-                      ? "bg-accent text-accent-contrast shadow-sm"
-                      : "text-text-muted hover:text-main hover:bg-surface-hover"
-                  }`}
-                >
-                  12h
-                </button>
-              </div>
+              <LayoutGroup id="settings-time">
+                <div className="flex bg-track-bg border border-track-border rounded-xl p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)] relative">
+                  {TIME_OPTIONS.map((option) => {
+                    const isActive = timeFormat === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setTimeFormat(option.value)}
+                        className={`relative px-3.5 py-1 rounded-lg text-xs lg:text-sm font-semibold transition-colors cursor-pointer ${
+                          isActive
+                            ? "text-gray-100 dark:text-gray-900"
+                            : "text-text-muted hover:text-main hover:bg-surface-hover"
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layout
+                            layoutId="settings-time-pill"
+                            className="absolute inset-0 bg-accent rounded-lg shadow-sm"
+                            transition={{
+                              type: "spring",
+                              duration: 0.35,
+                              bounce: 0.2,
+                            }}
+                          />
+                        )}
+                        <span className="relative z-10">{option.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </LayoutGroup>
             </div>
           </div>
         </div>
 
         {/* Notifications */}
-        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl relative overflow-hidden transition-colors duration-300">
           <div className="flex items-center gap-3 mb-6">
             <div className="size-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
               <Bell size={20} />
@@ -234,16 +319,16 @@ const Settings = () => {
                 role="switch"
                 aria-checked={dailySummary}
                 onClick={() => setDailySummary(!dailySummary)}
-                className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+                className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                   dailySummary
                     ? "bg-accent border-accent/80 shadow-sm"
                     : "bg-slate-200 dark:bg-white/15 border-slate-300/80 dark:border-white/20"
                 }`}
               >
-                <span
-                  className={`inline-block size-5 transform rounded-full bg-white shadow-md transition-transform duration-300 border border-black/5 ${
-                    dailySummary ? "translate-x-6" : "translate-x-0.5"
-                  }`}
+                <motion.span
+                  animate={{ x: dailySummary ? 24 : 2 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="inline-block size-5 rounded-full bg-white shadow-md border border-black/5"
                 />
               </button>
             </div>
@@ -262,16 +347,16 @@ const Settings = () => {
                 role="switch"
                 aria-checked={severeAlerts}
                 onClick={() => setSevereAlerts(!severeAlerts)}
-                className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/40 ${
+                className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/40 ${
                   severeAlerts
                     ? "bg-rose-500 border-rose-600/80 shadow-sm"
                     : "bg-slate-200 dark:bg-white/15 border-slate-300/80 dark:border-white/20"
                 }`}
               >
-                <span
-                  className={`inline-block size-5 transform rounded-full bg-white shadow-md transition-transform duration-300 border border-black/5 ${
-                    severeAlerts ? "translate-x-6" : "translate-x-0.5"
-                  }`}
+                <motion.span
+                  animate={{ x: severeAlerts ? 24 : 2 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="inline-block size-5 rounded-full bg-white shadow-md border border-black/5"
                 />
               </button>
             </div>
@@ -307,14 +392,21 @@ const Settings = () => {
                 <div>
                   <h3 className="text-lg font-bold text-main">K-Weather App</h3>
                   <p className="text-xs text-text-muted">
-                    Version 1.0.0 · Production Build
+                    Version 1.2.0 · Production Build
                   </p>
                 </div>
               </div>
 
               <p className="text-text-muted mt-2 text-xs lg:text-sm">
                 Designed and developed by{" "}
-                <span className="text-main font-semibold">KING-KARTA</span>.
+                <a
+                  href="https://katartismos.vercel.app"
+                  target="_blank"
+                  className="text-main font-semibold hover:underline"
+                >
+                  Katartismos
+                </a>
+                .
                 <br />
                 Powered by Next.js, Recharts & OpenWeatherMap.
               </p>

@@ -15,7 +15,7 @@
   --color-bg-top: hsl(155, 45%, 6%);
   --color-bg-bottom: hsl(162, 40%, 10%);
   --color-accent: hsl(150, 90%, 65%);
-  --color-accent-contrast: hsl(155, 45%, 6%);
+  --color-accent-contrast: var(--color-gray-900, #111827);
   --color-sidebar: hsl(155, 35%, 7%);
   --color-nav-active: hsl(155, 30%, 18%);
   --color-card: hsl(155, 25%, 11%);
@@ -28,7 +28,7 @@
   --color-surface-hover: rgba(255, 255, 255, 0.05);
   --color-pill-bg: rgba(0, 0, 0, 0.28);
   --color-track-bg: rgba(0, 0, 0, 0.35);
-  --color-track-border: rgba(255, 255, 255, 0.10);
+  --color-track-border: rgba(255, 255, 255, 0.1);
 }
 /* ============================= */
 /* Light Mode Overrides           */
@@ -37,8 +37,8 @@
   --color-bg-top: hsl(150, 30%, 97%);
   --color-bg-bottom: hsl(165, 35%, 93%);
   --color-accent: hsl(150, 65%, 35%);
-  --color-accent-contrast: hsl(0, 0%, 100%);
-  --color-sidebar: hsl(150, 20%, 91%);
+  --color-accent-contrast: var(--color-gray-100, #e5e7eb);
+  --color-sidebar: hsl(140, 23%, 95%);
   --color-nav-active: hsl(150, 25%, 84%);
   --color-card: hsl(0, 0%, 100%);
   --color-text-main: hsl(150, 30%, 12%);
@@ -108,4 +108,102 @@
 
 @utility tooltip {
   @apply rounded-xl bg-black/80 backdrop-blur-md px-3 py-1.5 text-xs text-white shadow-lg border border-white/10;
+}
+
+/* ============================================================ */
+/* View Transitions for Theme Switching & Icon Morphing        */
+/* ============================================================ */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: vt-theme-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-theme-fade-in;
+}
+
+@keyframes vt-theme-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-theme-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Theme Icon View Transition Morph */
+.theme-toggle-icon {
+  view-transition-name: theme-toggle-icon;
+}
+
+::view-transition-group(theme-toggle-icon) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+::view-transition-old(theme-toggle-icon) {
+  animation: 320ms cubic-bezier(0.4, 0, 0.2, 1) both theme-icon-exit;
+}
+
+::view-transition-new(theme-toggle-icon) {
+  animation: 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both theme-icon-enter;
+}
+
+@keyframes theme-icon-exit {
+  from {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: rotate(-100deg) scale(0.35);
+    opacity: 0;
+  }
+}
+
+@keyframes theme-icon-enter {
+  from {
+    transform: rotate(100deg) scale(0.35);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Settings Theme Pill View Transition */
+.settings-theme-pill {
+  view-transition-name: settings-theme-pill;
+}
+
+::view-transition-group(settings-theme-pill) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
 }

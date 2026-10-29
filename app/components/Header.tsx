@@ -2,30 +2,57 @@
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { MapPin, Search, Bell, Sun, Moon, User2, Menu } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { useMobileMenu } from "../context/MobileMenuContext";
 import { useWeather, ViewMode } from "../context/WeatherContext";
 
 const Header = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const { toggle } = useMobileMenu();
-  const { city, setCity, weatherData, viewMode, setViewMode } = useWeather();
-  const [searchInput, setSearchInput] = useState("");
+  const {
+    city,
+    setCity,
+    weatherData,
+    viewMode,
+    setViewMode,
+    searchQuery,
+    setSearchQuery,
+    convertTemp,
+    tempUnitLetter,
+  } = useWeather();
+  const [searchInput, setSearchInput] = useState(searchQuery);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Update search input when city changes (e.g. from initial load)
+  // Synchronize search input with global searchQuery
   useEffect(() => {
-    if (city) setSearchInput(city);
-  }, [city]);
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchInput.trim()) {
-      setCity(searchInput.trim());
+    const trimmed = searchInput.trim();
+    if (trimmed) {
+      setCity(trimmed);
+      setSearchQuery(trimmed);
+    }
+  };
+
+  const handleThemeToggle = () => {
+    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      document.startViewTransition(() => {
+        flushSync(() => {
+          setTheme(nextTheme);
+        });
+      });
+    } else {
+      setTheme(nextTheme);
     }
   };
 
@@ -44,7 +71,7 @@ const Header = () => {
         <button
           onClick={toggle}
           aria-label="Open navigation menu"
-          className="lg:hidden size-9 sm:size-10 flex items-center justify-center rounded-xl bg-pill-bg hover:bg-surface-hover border border-border text-main transition-colors shrink-0"
+          className="lg:hidden size-9 sm:size-10 flex items-center justify-center rounded-xl bg-pill-bg hover:bg-surface-hover border border-border text-main transition-colors shrink-0 cursor-pointer active:scale-95"
         >
           <Menu size={19} />
         </button>
@@ -55,7 +82,7 @@ const Header = () => {
             {displayCity}
           </span>
           <span className="text-accent font-bold">
-            {currentTemp !== undefined ? `${Math.round(currentTemp)}°` : "--°"}
+            {currentTemp !== undefined ? `${convertTemp(currentTemp)}°${tempUnitLetter}` : "--°"}
           </span>
         </div>
       </div>
@@ -74,32 +101,46 @@ const Header = () => {
             placeholder="Search location..."
             className="flex-1 min-w-0 text-xs sm:text-sm outline-none bg-transparent text-main placeholder:text-text-muted/60"
           />
-          {searchInput && (
-            <button
-              type="submit"
-              className="text-[11px] font-semibold bg-accent text-accent-contrast px-2 sm:px-2.5 py-1 rounded-full shrink-0 transition-transform active:scale-95 hover:brightness-105 cursor-pointer"
-            >
-              Search
-            </button>
-          )}
+          <AnimatePresence>
+            {searchInput && (
+              <motion.button
+                key="search-btn"
+                initial={{ opacity: 0, scale: 0.75 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.75 }}
+                transition={{ duration: 0.15 }}
+                type="submit"
+                className="text-[11px] font-semibold bg-accent text-gray-100 dark:text-gray-900 px-2 sm:px-2.5 py-1 rounded-full shrink-0 transition-transform active:scale-95 hover:brightness-105 cursor-pointer"
+              >
+                Search
+              </motion.button>
+            )}
+          </AnimatePresence>
         </form>
 
         {/* View Mode Segmented Pill */}
-        <div className="hidden md:flex items-center bg-pill-bg p-1 rounded-full border border-border shrink-0">
+        <div className="hidden md:flex items-center bg-pill-bg p-1 rounded-full border border-border shrink-0 relative">
           {forecastSpans.map((forecastSpan) => {
             const isActive = viewMode === forecastSpan.span;
             return (
               <button
                 key={forecastSpan.span}
                 type="button"
-                className={`px-3 py-1 rounded-full text-xs lg:text-sm font-medium transition-all cursor-pointer ${
+                className={`relative px-3 py-1 rounded-full text-xs lg:text-sm font-medium transition-colors cursor-pointer ${
                   isActive
-                    ? "bg-accent text-accent-contrast font-semibold shadow-sm"
+                    ? "text-gray-100 dark:text-gray-900 font-semibold"
                     : "text-text-muted hover:text-main"
                 }`}
                 onClick={() => setViewMode(forecastSpan.span)}
               >
-                {forecastSpan.span}
+                {isActive && (
+                  <motion.div
+                    layoutId="header-viewMode-indicator"
+                    className="absolute inset-0 bg-accent rounded-full shadow-sm"
+                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">{forecastSpan.span}</span>
               </button>
             );
           })}
@@ -111,15 +152,17 @@ const Header = () => {
         <button
           type="button"
           aria-label="Toggle color theme"
-          className="size-9 sm:size-9 lg:size-10 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main transition-all cursor-pointer active:scale-95 shrink-0"
-          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          className="size-9 sm:size-9 lg:size-10 rounded-full flex items-center justify-center border border-border bg-pill-bg hover:bg-surface-hover text-main transition-transform cursor-pointer active:scale-95 shrink-0"
+          onClick={handleThemeToggle}
         >
           {mounted ? (
-            resolvedTheme === "dark" ? (
-              <Sun size={17} className="text-amber-400" />
-            ) : (
-              <Moon size={17} className="text-blue-500" />
-            )
+            <span className="theme-toggle-icon flex items-center justify-center">
+              {resolvedTheme === "dark" ? (
+                <Sun size={17} className="text-amber-400" />
+              ) : (
+                <Moon size={17} className="text-blue-500" />
+              )}
+            </span>
           ) : (
             <div className="size-4 rounded-full bg-border" />
           )}

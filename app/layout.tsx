@@ -2,7 +2,9 @@ import React from "react";
 import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import "./globals.css";
-import { Header, SideBar, ThemeProvider } from "./components/NoSSR";
+import Header from "./components/Header";
+import SideBar from "./components/SideBar";
+import { ThemeProvider } from "./components/ThemeProvider";
 import { MobileMenuProvider } from "./context/MobileMenuContext";
 import { WeatherProvider } from "./context/WeatherContext";
 
@@ -14,8 +16,9 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "K-Weather App",
-  description: "Just a weather app to showcase my skills.",
+  title: "K-Weather — Get real time weather updates in style",
+  description:
+    "K-Weather is a weather application that provides real time weather updates in a stylish and modern interface.",
   icons: {
     icon: "/favicon.png",
   },

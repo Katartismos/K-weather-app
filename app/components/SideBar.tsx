@@ -7,10 +7,11 @@ import {
   CalendarDays,
   Settings,
   X,
-  CloudSun,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import { useMobileMenu } from "../context/MobileMenuContext";
 
 const SideBar = () => {
@@ -30,7 +31,7 @@ const SideBar = () => {
       {/* Backdrop for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity duration-300"
           onClick={close}
           aria-hidden="true"
         />
@@ -47,8 +48,8 @@ const SideBar = () => {
               onClick={close}
               className="flex items-center gap-2.5 group"
             >
-              <div className="size-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent group-hover:scale-105 transition-transform">
-                <CloudSun size={20} />
+              <div>
+                <Image src="/favicon.png" alt="Logo" width={40} height={40} />
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-xl tracking-tight font-archivo leading-none text-main">
@@ -82,14 +83,33 @@ const SideBar = () => {
                   <Link
                     href={item.address}
                     onClick={close}
-                    className={`group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-base transition-all duration-200 relative ${
+                    className={`group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-base transition-colors relative ${
                       isActive
-                        ? "bg-nav-active font-semibold text-main shadow-sm"
+                        ? "font-semibold text-main"
                         : "text-text-muted hover:text-main hover:bg-sidebar-hover"
                     }`}
                   >
                     {isActive && (
-                      <span className="absolute left-0 top-2 bottom-2 w-1 bg-accent rounded-full" />
+                      <motion.div
+                        layoutId="sidebar-active-indicator"
+                        className="absolute inset-0 bg-nav-active rounded-xl -z-10 shadow-sm border border-accent/20"
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 35,
+                        }}
+                      />
+                    )}
+                    {isActive && (
+                      <motion.span
+                        layoutId="sidebar-active-strip"
+                        className="absolute left-0 top-2 bottom-2 w-1 bg-accent rounded-full"
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 35,
+                        }}
+                      />
                     )}
                     <item.icon
                       size={19}
@@ -109,7 +129,7 @@ const SideBar = () => {
 
         {/* Sidebar Footer info */}
         <div className="pt-6 border-t border-border flex items-center justify-between text-xs text-text-muted px-1">
-          <span className="opacity-70">v1.0</span>
+          <span className="opacity-70">v1.2.0</span>
           <span className="flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-accent animate-pulse" />
             <span className="text-accent/90 font-medium">Connected</span>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useWeather } from '../context/WeatherContext';
 
 interface TemperatureChartProps {
   data: { name: string; temp: number }[];
@@ -14,11 +15,12 @@ interface CustomTooltipProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  const { tempUnitLetter } = useWeather();
   if (active && payload && payload.length) {
     return (
       <div className="bg-black/85 backdrop-blur-md border border-white/15 rounded-xl px-3 py-1.5 shadow-2xl text-xs flex items-center gap-2">
         <span className="text-white/75 font-medium">{label}</span>
-        <span className="font-bold text-accent text-sm">{payload[0].value}°C</span>
+        <span className="font-bold text-accent text-sm">{payload[0].value}°{tempUnitLetter}</span>
       </div>
     );
   }

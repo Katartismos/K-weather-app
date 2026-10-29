@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { DateTime } from 'luxon';
 
 import { CurrentWeather, ForecastData, UVData, InterpolatedWeather } from '../../types/weather';
 
@@ -11,10 +12,15 @@ interface WeatherData {
 }
 
 export type ViewMode = 'Daily' | 'Weekly';
+export type TemperatureUnit = 'celsius' | 'fahrenheit';
+export type WindUnit = 'kmh' | 'mph';
+export type TimeFormat = '24h' | '12h';
 
 interface WeatherContextType {
   city: string;
   setCity: (city: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   weatherData: WeatherData | null;
@@ -22,16 +28,133 @@ interface WeatherContextType {
   loading: boolean;
   error: string | null;
   refresh: () => void;
+  // Metric settings & helpers
+  temperatureUnit: TemperatureUnit;
+  setTemperatureUnit: (unit: TemperatureUnit) => void;
+  windUnit: WindUnit;
+  setWindUnit: (unit: WindUnit) => void;
+  timeFormat: TimeFormat;
+  setTimeFormat: (format: TimeFormat) => void;
+  convertTemp: (celsius: number) => number;
+  formatTemp: (celsius: number, showUnit?: boolean) => string;
+  tempUnitSymbol: string;
+  tempUnitLetter: string;
+  convertWind: (speedMs: number) => number;
+  formatWind: (speedMs: number) => string;
+  windUnitSymbol: string;
+  formatTime: (dt: DateTime, mode?: 'standard' | 'short') => string;
 }
 
 const WeatherContext = createContext<WeatherContextType | undefined>(undefined);
 
 export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [city, setCity] = useState('New York');
+  const [city, setCity] = useState('Lagos');
+  const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('Weekly');
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Metric preferences with localStorage persistence
+  const [temperatureUnit, setTemperatureUnitState] = useState<TemperatureUnit>('celsius');
+  const [windUnit, setWindUnitState] = useState<WindUnit>('kmh');
+  const [timeFormat, setTimeFormatState] = useState<TimeFormat>('24h');
+
+  useEffect(() => {
+    try {
+      const savedTemp = localStorage.getItem('k_weather_temp_unit') as TemperatureUnit | null;
+      if (savedTemp === 'celsius' || savedTemp === 'fahrenheit') {
+        setTemperatureUnitState(savedTemp);
+      }
+      const savedWind = localStorage.getItem('k_weather_wind_unit') as WindUnit | null;
+      if (savedWind === 'kmh' || savedWind === 'mph') {
+        setWindUnitState(savedWind);
+      }
+      const savedTime = localStorage.getItem('k_weather_time_format') as TimeFormat | null;
+      if (savedTime === '24h' || savedTime === '12h') {
+        setTimeFormatState(savedTime);
+      }
+    } catch {
+      // LocalStorage access may fail in restricted contexts
+    }
+  }, []);
+
+  const setTemperatureUnit = useCallback((unit: TemperatureUnit) => {
+    setTemperatureUnitState(unit);
+    try {
+      localStorage.setItem('k_weather_temp_unit', unit);
+    } catch {}
+  }, []);
+
+  const setWindUnit = useCallback((unit: WindUnit) => {
+    setWindUnitState(unit);
+    try {
+      localStorage.setItem('k_weather_wind_unit', unit);
+    } catch {}
+  }, []);
+
+  const setTimeFormat = useCallback((format: TimeFormat) => {
+    setTimeFormatState(format);
+    try {
+      localStorage.setItem('k_weather_time_format', format);
+    } catch {}
+  }, []);
+
+  // Conversion Helpers
+  const convertTemp = useCallback(
+    (celsius: number) => {
+      if (celsius === undefined || celsius === null || isNaN(celsius)) return 0;
+      if (temperatureUnit === 'fahrenheit') {
+        return Math.round((celsius * 9) / 5 + 32);
+      }
+      return Math.round(celsius);
+    },
+    [temperatureUnit]
+  );
+
+  const formatTemp = useCallback(
+    (celsius: number, showUnit = true) => {
+      const converted = convertTemp(celsius);
+      return showUnit
+        ? `${converted}°${temperatureUnit === 'fahrenheit' ? 'F' : 'C'}`
+        : `${converted}°`;
+    },
+    [convertTemp, temperatureUnit]
+  );
+
+  const tempUnitSymbol = temperatureUnit === 'fahrenheit' ? '°F' : '°C';
+  const tempUnitLetter = temperatureUnit === 'fahrenheit' ? 'F' : 'C';
+
+  const convertWind = useCallback(
+    (speedMs: number) => {
+      if (speedMs === undefined || speedMs === null || isNaN(speedMs)) return 0;
+      if (windUnit === 'mph') {
+        return Math.round(speedMs * 2.23694);
+      }
+      // km/h is standard metric speed (m/s * 3.6)
+      return Math.round(speedMs * 3.6);
+    },
+    [windUnit]
+  );
+
+  const windUnitSymbol = windUnit === 'mph' ? 'mph' : 'km/h';
+
+  const formatWind = useCallback(
+    (speedMs: number) => {
+      return `${convertWind(speedMs)} ${windUnitSymbol}`;
+    },
+    [convertWind, windUnitSymbol]
+  );
+
+  const formatTime = useCallback(
+    (dt: DateTime, mode: 'standard' | 'short' = 'standard') => {
+      if (timeFormat === '24h') {
+        return mode === 'short' ? dt.toFormat('HH:00') : dt.toFormat('HH:mm');
+      }
+      return mode === 'short' ? dt.toFormat('ha') : dt.toFormat('h:mm a');
+    },
+    [timeFormat]
+  );
 
   const fetchWeather = useCallback(async (cityName: string) => {
     setLoading(true);
@@ -110,9 +233,35 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [weatherData]);
 
   return (
-    <WeatherContext.Provider value={{ 
-      city, setCity, viewMode, setViewMode, weatherData, interpolatedHourly, loading, error, refresh 
-    }}>
+    <WeatherContext.Provider
+      value={{
+        city,
+        setCity,
+        searchQuery,
+        setSearchQuery,
+        viewMode,
+        setViewMode,
+        weatherData,
+        interpolatedHourly,
+        loading,
+        error,
+        refresh,
+        temperatureUnit,
+        setTemperatureUnit,
+        windUnit,
+        setWindUnit,
+        timeFormat,
+        setTimeFormat,
+        convertTemp,
+        formatTemp,
+        tempUnitSymbol,
+        tempUnitLetter,
+        convertWind,
+        formatWind,
+        windUnitSymbol,
+        formatTime,
+      }}
+    >
       {children}
     </WeatherContext.Provider>
   );
