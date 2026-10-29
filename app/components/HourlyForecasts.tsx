@@ -20,7 +20,7 @@ interface HourlyForecastsProps {
 }
 
 const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
-  const { weatherData, interpolatedHourly, loading, viewMode } = useWeather();
+  const { weatherData, interpolatedHourly, loading, viewMode, convertTemp, formatTime } = useWeather();
 
   if (loading || !weatherData) {
     return (
@@ -36,13 +36,16 @@ const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
 
   if (viewMode === 'Daily') {
     if (interpolatedHourly) {
-      displayData = interpolatedHourly.map((item, idx) => ({
-        id: item.dt,
-        time: idx === 0 ? 'Now' : DateTime.fromSeconds(item.dt + currentIntervals.city.timezone, { zone: 'utc' }).toFormat('ha'),
-        icon: item.weather[0]?.icon || '02d',
-        temp: `${Math.round(item.temp)}°`,
-        isNow: idx === 0,
-      }));
+      displayData = interpolatedHourly.map((item, idx) => {
+        const itemDt = DateTime.fromSeconds(item.dt + currentIntervals.city.timezone, { zone: 'utc' });
+        return {
+          id: item.dt,
+          time: idx === 0 ? 'Now' : formatTime(itemDt, 'short'),
+          icon: item.weather[0]?.icon || '02d',
+          temp: `${convertTemp(item.temp)}°`,
+          isNow: idx === 0,
+        };
+      });
     }
   } else {
     // Show Daily steps (Weekly mode)
@@ -57,7 +60,7 @@ const HourlyForecasts: React.FC<HourlyForecastsProps> = ({ startIndex }) => {
           id: dateStr,
           time: dt.toFormat('ccc'),
           icon: item.weather[0]?.icon || '02d',
-          temp: `${Math.round(item.main.temp)}°`,
+          temp: `${convertTemp(item.main.temp)}°`,
           isNow: dailyData.length === 0,
         });
         processedDays.add(dateStr);

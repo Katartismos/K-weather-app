@@ -10,7 +10,7 @@ import { ForecastItem } from '../../types/weather';
 import { getWeatherIconUrl } from '../utils/weatherIcon';
 
 const Forecast = () => {
-  const { weatherData, loading } = useWeather();
+  const { weatherData, loading, convertTemp, tempUnitLetter, formatTime } = useWeather();
   const [now, setNow] = useState(() => DateTime.now());
 
   useEffect(() => {
@@ -36,20 +36,23 @@ const Forecast = () => {
   // Calculate true real-time local date and time using location's timezone offset
   const localDt = now.setZone(FixedOffsetZone.instance(current.timezone / 60));
   const formattedDate = localDt.toFormat('dd LLLL yyyy');
-  const formattedTime = localDt.toFormat('HH:mm');
+  const formattedTime = formatTime(localDt, 'standard');
   const tzOffset = localDt.toFormat('ZZZZ');
 
   // Prepare chart data from forecast (next 4 intervals)
-  const chartData = forecast.list.slice(0, 4).map((item: ForecastItem) => ({
-    name: DateTime.fromSeconds(item.dt, { zone: 'utc' }).setZone(FixedOffsetZone.instance(forecast.city.timezone / 60)).toFormat('HH:mm'),
-    temp: Math.round(item.main.temp),
-  }));
+  const chartData = forecast.list.slice(0, 4).map((item: ForecastItem) => {
+    const itemDt = DateTime.fromSeconds(item.dt, { zone: 'utc' }).setZone(FixedOffsetZone.instance(forecast.city.timezone / 60));
+    return {
+      name: formatTime(itemDt, 'short'),
+      temp: convertTemp(item.main.temp),
+    };
+  });
 
   const periods = [
-    { name: 'Now', temp: Math.round(current.main.temp), icon: Clock, color: 'text-accent' },
-    { name: 'High', temp: Math.round(current.main.temp_max), icon: TrendingUp, color: 'text-amber-400' },
-    { name: 'Low', temp: Math.round(current.main.temp_min), icon: TrendingDown, color: 'text-sky-400' },
-    { name: 'Feels', temp: Math.round(current.main.feels_like), icon: Thermometer, color: 'text-emerald-400' },
+    { name: 'Now', temp: convertTemp(current.main.temp), icon: Clock, color: 'text-accent' },
+    { name: 'High', temp: convertTemp(current.main.temp_max), icon: TrendingUp, color: 'text-amber-400' },
+    { name: 'Low', temp: convertTemp(current.main.temp_min), icon: TrendingDown, color: 'text-sky-400' },
+    { name: 'Feels', temp: convertTemp(current.main.feels_like), icon: Thermometer, color: 'text-emerald-400' },
   ];
 
   const weatherDesc = current.weather[0]?.description || 'Clear';
@@ -78,7 +81,7 @@ const Forecast = () => {
                 {weatherDesc}
               </span>
               <div className="text-3xl sm:text-4xl lg:text-6xl font-intertight-600 tracking-tight my-0.5 sm:my-1 text-main">
-                {Math.round(current.main.temp)}°<span className="text-xl sm:text-2xl lg:text-3xl text-text-muted font-normal">C</span>
+                {convertTemp(current.main.temp)}°<span className="text-xl sm:text-2xl lg:text-3xl text-text-muted font-normal">{tempUnitLetter}</span>
               </div>
             </div>
           </div>
@@ -129,7 +132,7 @@ const Forecast = () => {
                   <Icon size={14} className={p.color} />
                   <span>{p.name}</span>
                 </div>
-                <span className="text-accent font-bold text-xs sm:text-sm lg:text-base">{p.temp}°C</span>
+                <span className="text-accent font-bold text-xs sm:text-sm lg:text-base">{p.temp}°{tempUnitLetter}</span>
               </div>
             );
           })}

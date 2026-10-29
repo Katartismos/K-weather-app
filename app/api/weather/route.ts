@@ -26,7 +26,7 @@ function httpsGet(url: string): Promise<any> {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const city = searchParams.get('city') || 'New York';
+  const city = searchParams.get('city') || 'Lagos';
 
   const apiKey = process.env.OPENWEATHERMAP_API_KEY;
   if (!apiKey) {

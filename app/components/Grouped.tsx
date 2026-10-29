@@ -17,7 +17,7 @@ interface DailyForecast {
 }
 
 const Grouped: React.FC = () => {
-  const { weatherData, loading } = useWeather();
+  const { weatherData, loading, convertTemp } = useWeather();
 
   if (loading || !weatherData) {
     return (
@@ -42,7 +42,7 @@ const Grouped: React.FC = () => {
       dailyData.push({
         day: dt.toFormat('cccc'),
         date: dt.toFormat('d LLL'),
-        temp: `${Math.round(item.main.temp)}°`,
+        temp: `${convertTemp(item.main.temp)}°`,
         icon: item.weather[0]?.icon || '02d',
         desc: item.weather[0]?.description || '',
         dateStr,

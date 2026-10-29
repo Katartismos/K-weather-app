@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { Sun, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { useWeather } from '../context/WeatherContext';
+import { Sun, ShieldAlert, ShieldCheck } from "lucide-react";
+import { motion } from "motion/react";
+import { useWeather } from "../context/WeatherContext";
 
 const UV = () => {
   const { weatherData } = useWeather();
@@ -11,45 +12,45 @@ const UV = () => {
   const getUvInfo = (uv: number) => {
     if (uv <= 2) {
       return {
-        level: 'Low',
-        color: 'text-emerald-400',
-        badgeBg: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
-        advice: 'Safe for outdoor activities',
+        level: "Low",
+        color: "text-emerald-400",
+        badgeBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-400",
+        advice: "Safe for outdoor activities",
         tier: 1,
       };
     }
     if (uv <= 5) {
       return {
-        level: 'Moderate',
-        color: 'text-amber-400',
-        badgeBg: 'bg-amber-500/15 border-amber-500/30 text-amber-400',
-        advice: 'Wear sunscreen outdoors',
+        level: "Moderate",
+        color: "text-amber-400",
+        badgeBg: "bg-amber-500/15 border-amber-500/30 text-amber-400",
+        advice: "Wear sunscreen outdoors",
         tier: 2,
       };
     }
     if (uv <= 7) {
       return {
-        level: 'High',
-        color: 'text-orange-400',
-        badgeBg: 'bg-orange-500/15 border-orange-500/30 text-orange-400',
-        advice: 'Seek shade during midday',
+        level: "High",
+        color: "text-orange-400",
+        badgeBg: "bg-orange-500/15 border-orange-500/30 text-orange-400",
+        advice: "Seek shade during midday",
         tier: 3,
       };
     }
     if (uv <= 10) {
       return {
-        level: 'Very High',
-        color: 'text-rose-400',
-        badgeBg: 'bg-rose-500/15 border-rose-500/30 text-rose-400',
-        advice: 'Extra sun protection needed',
+        level: "Very High",
+        color: "text-rose-400",
+        badgeBg: "bg-rose-500/15 border-rose-500/30 text-rose-400",
+        advice: "Extra sun protection needed",
         tier: 4,
       };
     }
     return {
-      level: 'Extreme',
-      color: 'text-purple-400',
-      badgeBg: 'bg-purple-500/15 border-purple-500/30 text-purple-400',
-      advice: 'Avoid midday direct sun',
+      level: "Extreme",
+      color: "text-purple-400",
+      badgeBg: "bg-purple-500/15 border-purple-500/30 text-purple-400",
+      advice: "Avoid midday direct sun",
       tier: 5,
     };
   };
@@ -57,7 +58,7 @@ const UV = () => {
   const info = getUvInfo(roundedUv);
 
   return (
-    <div className="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl shadow-xl hover:border-accent/35 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between gap-3.5 sm:gap-4 relative overflow-hidden group">
+    <div className="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between gap-3.5 sm:gap-4 relative overflow-hidden group">
       {/* Background subtle glow */}
       <div className="absolute -top-10 -right-10 size-28 rounded-full bg-amber-400/10 blur-2xl group-hover:bg-amber-400/20 transition-all pointer-events-none" />
 
@@ -67,9 +68,13 @@ const UV = () => {
           <div className="size-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
             <Sun size={18} />
           </div>
-          <span className="font-semibold text-sm lg:text-base text-main">UV Index</span>
+          <span className="font-semibold text-sm lg:text-base text-main">
+            UV Index
+          </span>
         </div>
-        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${info.badgeBg}`}>
+        <span
+          className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${info.badgeBg}`}
+        >
           {info.level}
         </span>
       </div>
@@ -88,18 +93,23 @@ const UV = () => {
           {[1, 2, 3, 4, 5].map((tier) => {
             const isActive = tier <= info.tier;
             const colors = [
-              'bg-emerald-400',
-              'bg-amber-400',
-              'bg-orange-400',
-              'bg-rose-400',
-              'bg-purple-400',
+              "bg-emerald-400",
+              "bg-amber-400",
+              "bg-orange-400",
+              "bg-rose-400",
+              "bg-purple-400",
             ];
             return (
-              <div 
-                key={tier} 
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  isActive ? colors[tier - 1] : 'bg-pill-bg border border-border'
-                }`} 
+              <motion.div
+                key={tier}
+                initial={{ scaleX: 0, opacity: 0.5 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ delay: tier * 0.08, duration: 0.3 }}
+                className={`h-1.5 rounded-full origin-left transition-colors duration-500 ${
+                  isActive
+                    ? colors[tier - 1]
+                    : "bg-pill-bg border border-border"
+                }`}
               />
             );
           })}
